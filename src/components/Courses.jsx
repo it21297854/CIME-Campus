@@ -1,53 +1,22 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { FileText, Briefcase, Award, Target } from 'lucide-react'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { courseList } from './courseData' // ✅ new import path
 
 const Courses = () => {
-  const courseList = [
-    {
-      icon: <FileText className='h-8 w-8 text-blue-400' />,
-      title: 'Certificate in Contract Administration',
-      description:
-        'Master the fundamentals of contract law, negotiation, and management for construction projects.',
-    },
-    {
-      icon: <Briefcase className='h-8 w-8 text-blue-400' />,
-      title: 'Professional Diploma in Contract Administration',
-      description:
-        'An advanced program for professionals seeking to deepen their expertise in complex contract scenarios.',
-    },
-    {
-      icon: <Award className='h-8 w-8 text-blue-400' />,
-      title: 'Quantity Surveying Practice Certificate',
-      description:
-        'Gain practical skills in cost estimation, tendering, and financial control of construction projects.',
-    },
-    {
-      icon: <Target className='h-8 w-8 text-blue-400' />,
-      title: 'RICS APC Preparation Program',
-      description:
-        'A specialized program to guide you through the Assessment of Professional Competence for RICS chartership.',
-    },
-  ]
+  const [expanded, setExpanded] = useState(null)
 
   const cardVariants = {
-    offscreen: {
-      y: 50,
-      opacity: 0,
-    },
+    offscreen: { y: 50, opacity: 0 },
     onscreen: {
       y: 0,
       opacity: 1,
-      transition: {
-        type: 'spring',
-        bounce: 0.4,
-        duration: 0.8,
-      },
+      transition: { type: 'spring', bounce: 0.4, duration: 0.8 },
     },
   }
 
   return (
-    <section id='courses' className='py-20 sm:py-32 '>
+    <section id='courses' className='py-20 sm:py-32'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -77,11 +46,46 @@ const Courses = () => {
             >
               <div className='flex items-start space-x-4'>
                 <div className='flex-shrink-0'>{course.icon}</div>
-                <div>
+                <div className='flex-1'>
                   <h3 className='text-xl font-bold text-white'>
                     {course.title}
                   </h3>
                   <p className='mt-2 text-slate-300'>{course.description}</p>
+
+                  {course.details && (
+                    <>
+                      <button
+                        onClick={() =>
+                          setExpanded(expanded === index ? null : index)
+                        }
+                        className='mt-3 flex items-center text-blue-400 hover:text-blue-300 font-medium'
+                      >
+                        {expanded === index ? (
+                          <>
+                            Hide Details <ChevronUp className='ml-1 h-4 w-4' />
+                          </>
+                        ) : (
+                          <>
+                            More Details{' '}
+                            <ChevronDown className='ml-1 h-4 w-4' />
+                          </>
+                        )}
+                      </button>
+
+                      <AnimatePresence>
+                        {expanded === index && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.4 }}
+                          >
+                            {course.details}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>
